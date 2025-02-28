@@ -1,0 +1,4 @@
+User : Username, password, role
+
+
+faction : Name, regime, type, image, couleur, capitale, description, Dirigeantes_heros, guildes_link, heros_link
