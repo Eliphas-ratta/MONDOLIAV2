@@ -1,4 +1,15 @@
 User : Username, password, role
 
 
-faction : Name, regime, type, image, couleur, capitale, description, Dirigeantes_heros, guildes_link, heros_link
+faction : 
+
+Name = varchar(255) 
+regime = varchar(255)
+type = varchar(255)
+image = varchar(255)
+couleur = varchar(255)
+capitale = varchar(255)
+description = text
+Dirigeantes_heros = INT 
+guildes_link = INT
+heros_link = INT
