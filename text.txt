@@ -3,13 +3,54 @@ User : Username, password, role
 
 faction : 
 
-Name = varchar(255) 
+name = varchar(255) 
 regime = varchar(255)
 type = varchar(255)
 image = varchar(255)
 couleur = varchar(255)
 capitale = varchar(255)
 description = text
-Dirigeantes_heros = INT 
-guildes_link = INT
-heros_link = INT
+dirigeantes_heros = INT 
+guildes_link = INT 
+heros_link = INT 
+
+
+Guilde :
+
+name = varchar(255) 
+type = varchar(255) 
+description = text
+image = varchar(255) 
+visibility = ENUM ('secrete', 'visible', 'discrete')
+faction = INT
+dirigeante = INT 
+hero = INT
+
+
+Race :
+
+name = varchar(255) 
+taille = varchar(255) 
+image = varchar(255) 
+description = text
+hero = int 
+
+hero : 
+
+name = varchar(255) 
+age = varchar(255) 
+image = varchar(255) 
+taille = varchar(255) 
+fonction = varchar(255) 
+description = text
+faction = int
+guilde = int 
+race = int
+hero = int (les hero qui sont on le meme contexte que eux)
+contexte = int
+
+Contexte : 
+
+titre = varchar(255) 
+description = text
+hero = int (peut en avoir plusieurs)
