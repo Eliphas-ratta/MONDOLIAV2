@@ -1,7 +1,7 @@
 <?php
 require_once '../includes/header.php';
 
-// Vérifier si l'ID est passé en paramètre
+// Vérifier si un ID est passé en paramètre
 if (!isset($_GET['id'])) {
     header("Location: heros.php");
     exit();
@@ -9,7 +9,7 @@ if (!isset($_GET['id'])) {
 
 $hero_id = $_GET['id'];
 
-// Récupération des infos du héros
+// Récupération des informations du héros
 $stmt = $pdo->prepare("SELECT * FROM heros WHERE id = ?");
 $stmt->execute([$hero_id]);
 $hero = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -25,36 +25,49 @@ $stmt->execute([$hero['faction_id']]);
 $faction = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Récupération des guildes associées
-$stmt = $pdo->prepare("SELECT id, name, image, type FROM guildes WHERE id IN 
-                      (SELECT guilde_id FROM heros_guildes WHERE hero_id = ?)");
-$stmt->execute([$hero_id]);
-$guildes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Récupération de la guilde associée directement depuis `heros`
+$stmt = $pdo->prepare("
+    SELECT g.id, g.name, g.image, g.type 
+    FROM guildes g 
+    WHERE g.id = ?
+");
+$stmt->execute([$hero['guilde_id']]);
+$guilde = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Récupération de la race associée
+
+// Récupération de la race du héros
 $stmt = $pdo->prepare("SELECT id, name, image FROM races WHERE id = ?");
 $stmt->execute([$hero['race_id']]);
 $race = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Récupération des héros liés (alliés, ennemis, etc.)
-$stmt = $pdo->prepare("SELECT id, name, image, fonction FROM heros WHERE id IN 
-                      (SELECT hero2_id FROM heros_relations WHERE hero1_id = ?)");
+// Récupération des héros liés via les relations
+$stmt = $pdo->prepare("
+    SELECT h.id, h.name, h.image, h.fonction 
+    FROM hero_relations hr
+    JOIN heros h ON hr.related_hero_id = h.id
+    WHERE hr.hero_id = ?
+");
 $stmt->execute([$hero_id]);
-$heros_lies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$related_heroes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Récupération des contextes associés
-$stmt = $pdo->prepare("SELECT id, titre FROM contextes WHERE id IN 
-                      (SELECT contexte_id FROM heros_contextes WHERE hero_id = ?)");
+// Récupération des contextes associés au héros
+$stmt = $pdo->prepare("
+    SELECT c.id, c.titre 
+    FROM hero_contextes hc
+    JOIN contextes c ON hc.contexte_id = c.id
+    WHERE hc.hero_id = ?
+");
 $stmt->execute([$hero_id]);
 $contextes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <div class="container mx-auto py-10">
-    <!-- Infos du héros -->
+    <!-- Informations du héros -->
     <div class="flex items-start justify-between gap-6">
         <div class="flex gap-6">
             <img src="<?= $hero['image'] ?>" alt="<?= $hero['name'] ?>" class="w-80 h-80 object-cover rounded-lg">
             <div>
-                <h1 class="text-3xl font-bold text-red-500"><?= $hero['name'] ?></h1>
+                <h1 class="text-3xl font-bold text-red-500 pb-8 "><?= $hero['name'] ?></h1>
                 <p class="text-white"><strong>Âge :</strong> <?= $hero['age'] ?></p>
                 <p class="text-white"><strong>Taille :</strong> <?= $hero['taille'] ?></p>
                 <p class="text-white"><strong>Fonction :</strong> <?= $hero['fonction'] ?></p>
@@ -77,55 +90,60 @@ $contextes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php endif; ?>
     </div>
 
-    <!-- Guildes -->
-    <h2 class="text-2xl font-bold text-center text-white mt-10 bg-neutral-800 p-3">Guildes</h2>
-    <div class="grid grid-cols-5 gap-6 justify-center px-10 mt-6">
-        <?php foreach ($guildes as $guilde) : ?>
-            <a href="guilde.php?id=<?= $guilde['id'] ?>" class="transform transition duration-300 hover:scale-105">
-                <div class="guilde-card bg-neutral-900 p-4 rounded-lg shadow-lg text-center border-neutral-700 w-40">
-                    <img src="<?= $guilde['image'] ?>" alt="<?= $guilde['name'] ?>" class="w-full h-24 object-cover rounded-lg mb-2">
-                    <p class="text-white font-bold"><?= $guilde['name'] ?></p>
-                    <p class="text-gray-400 text-sm"><?= $guilde['type'] ?></p>
-                </div>
-            </a>
-        <?php endforeach; ?>
+    <div class="flex justify-around ">
+    <!-- Guilde associée -->
+     <div claa="flex">
+<h2 class="text-2xl font-bold text-center text-white mt-10 bg-neutral-800 p-3">Guilde</h2>
+            <?php if ($guilde) : ?>
+            <div class="flex justify-center mt-6">
+                <a href="guilde.php?id=<?= $guilde['id'] ?>" class="transform transition duration-300 hover:scale-105">
+                    <div class="guilde-card bg-neutral-900 p-4 rounded-lg shadow-lg text-center border-neutral-700 w-50">
+                <img src="<?= $guilde['image'] ?>" alt="<?= $guilde['name'] ?>" class="w-full h-60 object-cover rounded-lg mb-2">
+                <p class="text-white font-bold"><?= $guilde['name'] ?></p>
+                <p class="text-gray-400 text-sm"><?= $guilde['type'] ?></p>
+            </div>
+        </a>
     </div>
-
-    <!-- Race -->
+<?php else : ?>
+    <p class="text-center text-gray-400">Aucune guilde associée</p>
+<?php endif; ?>
+    </div>
+    <div claa="flex">
+    <!-- Race du héros -->
     <h2 class="text-2xl font-bold text-center text-white mt-10 bg-neutral-800 p-3">Race</h2>
-    <div class="flex justify-center mt-6">
-        <?php if ($race) : ?>
+    <?php if ($race) : ?>
+        <div class="flex justify-center mt-6">
             <a href="race.php?id=<?= $race['id'] ?>" class="transform transition duration-300 hover:scale-105">
-                <div class="race-card bg-neutral-900 p-4 rounded-lg shadow-lg text-center border-neutral-700 w-40">
-                    <img src="<?= $race['image'] ?>" alt="<?= $race['name'] ?>" class="w-full h-24 object-cover rounded-lg mb-2">
+                <div class="race-card bg-neutral-900 p-4 rounded-lg shadow-lg text-center border-neutral-700 w-50">
+                    <img src="<?= $race['image'] ?>" alt="<?= $race['name'] ?>" class="w-full h-60 object-cover rounded-lg mb-2">
                     <p class="text-white font-bold"><?= $race['name'] ?></p>
                 </div>
             </a>
-        <?php endif; ?>
+        </div>
+    <?php endif; ?>
+    </div>
     </div>
 
     <!-- Héros liés -->
     <h2 class="text-2xl font-bold text-center text-white mt-10 bg-neutral-800 p-3">Héros liés</h2>
-    <div class="grid grid-cols-5 gap-6 justify-center px-10 mt-6">
-        <?php foreach ($heros_lies as $hero_lie) : ?>
-            <a href="hero.php?id=<?= $hero_lie['id'] ?>" class="transform transition duration-300 hover:scale-105">
-                <div class="hero-card bg-neutral-900 p-4 rounded-lg shadow-lg text-center border-neutral-700 w-40">
-                    <img src="<?= $hero_lie['image'] ?>" alt="<?= $hero_lie['name'] ?>" class="w-full h-24 object-cover rounded-lg mb-2">
-                    <p class="text-white font-bold"><?= $hero_lie['name'] ?></p>
-                    <p class="text-gray-400 text-sm"><?= $hero_lie['fonction'] ?></p>
+    <div class="grid grid-cols-5 gap-6 justify-center mt-6">
+        <?php foreach ($related_heroes as $hero) : ?>
+            <a href="hero.php?id=<?= $hero['id'] ?>" class="transform transition duration-300 hover:scale-105">
+                <div class="hero-card bg-neutral-900 p-4 rounded-lg shadow-lg text-center border-neutral-700 w-60">
+                    <img src="<?= $hero['image'] ?>" alt="<?= $hero['name'] ?>" class="w-full h-full object-cover rounded-lg mb-2">
+                    <p class="text-white font-bold"><?= $hero['name'] ?></p>
+                    <p class="text-gray-400 text-sm"><?= $hero['fonction'] ?></p>
                 </div>
             </a>
         <?php endforeach; ?>
     </div>
 
-    <!-- Contextes -->
+    <!-- Contextes associés -->
     <h2 class="text-2xl font-bold text-center text-white mt-10 bg-neutral-800 p-3">Contextes</h2>
-    <div class="grid grid-cols-5 gap-6 justify-center px-10 mt-6">
+    <div class="flex justify-center gap-6 mt-6">
         <?php foreach ($contextes as $contexte) : ?>
-            <a href="contexte.php?id=<?= $contexte['id'] ?>" class="transform transition duration-300 hover:scale-105">
-                <div class="contexte-card bg-neutral-900 p-4 rounded-lg shadow-lg text-center border-neutral-700 w-40">
-                    <p class="text-white font-bold"><?= $contexte['titre'] ?></p>
-                </div>
+            <a href="contexte.php?id=<?= $contexte['id'] ?>" class="bg-neutral-900 text-white px-6 py-3 rounded-md text-center hover:bg-neutral-700 transition">
+                <?= $contexte['titre'] ?>
             </a>
         <?php endforeach; ?>
     </div>
