@@ -118,15 +118,19 @@ if (isset($_GET['edit'])) {
             </div>
 
             <div class="mt-4">
-                <label class="block text-sm">Dirigeantes</label>
-                <select name="dirigeantes[]" multiple class="w-full p-3 bg-neutral-800 text-white rounded-md">
-                    <?php foreach ($heroes as $hero) : ?>
-                        <option value="<?= $hero['id'] ?>" <?= in_array($hero['id'], $dirigeantes_ids) ? 'selected' : '' ?>>
-                            <?= $hero['name'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+    <label class="block text-sm">Dirigeantes</label>
+    <div class="w-full p-3 bg-neutral-800 text-white rounded-md overflow-y-auto max-h-64">
+        <?php foreach ($heroes as $hero) : ?>
+            <label class="flex items-center space-x-3 p-2 hover:bg-neutral-700 rounded-md cursor-pointer">
+                <input type="checkbox" name="dirigeantes[]" value="<?= $hero['id'] ?>" 
+                       <?= in_array($hero['id'], $dirigeantes_ids) ? 'checked' : '' ?> class="form-checkbox text-green-500">
+                <img src="<?= $hero['image'] ?>" class="w-10 h-10 rounded-full object-cover">
+                <span><?= $hero['name'] ?></span>
+            </label>
+        <?php endforeach; ?>
+    </div>
+</div>
+
 
             <div class="mt-4">
     <label class="block text-sm">Faction associée</label>
