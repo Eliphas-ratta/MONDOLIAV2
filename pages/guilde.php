@@ -80,7 +80,7 @@ $heros = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Héros -->
     <h2 class="text-2xl font-bold text-center text-white mt-10 bg-neutral-800 p-3">Héros</h2>
-    <div class="grid grid-cols-3 gap-6 justify-center px-10 mt-6">
+    <div class="grid grid-cols-5 gap-6 justify-center px-10 mt-6">
         <?php foreach ($heros as $hero) : ?>
             <a href="hero.php?id=<?= $hero['id'] ?>" class="transform transition duration-300 hover:scale-105">
                 <div class="hero-card bg-neutral-900 p-4 rounded-lg shadow-lg text-center border-neutral-700 w-64">
