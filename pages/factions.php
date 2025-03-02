@@ -19,18 +19,16 @@ $factions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Liste des factions -->
     <div class="grid grid-cols-5 gap-6 justify-center px-10">
-    <?php foreach ($factions as $faction) : ?>
-        <a href="faction.php?id=<?= $faction['id'] ?>" class="transform transition duration-300 hover:scale-105">
-            <div class="faction-card bg-neutral-900 p-4 rounded-lg shadow-lg text-center  border-neutral-700">
-                <img src="<?= $faction['image'] ?>" alt="<?= $faction['name'] ?>" class="w-full h-64 object-cover rounded-lg mb-2">
-                <p class="text-white font-bold text-lg"><?= $faction['name'] ?></p>
-                <p class="text-gray-400 text-sm"><?= $faction['regime'] ?></p> <!-- Affichage du régime -->
-            </div>
-        </a>
-    <?php endforeach; ?>
-</div>
-
-
+        <?php foreach ($factions as $faction) : ?>
+            <a href="faction.php?id=<?= $faction['id'] ?>" class="transform transition duration-300 hover:scale-105">
+                <div class="faction-card bg-neutral-900 p-4 rounded-lg shadow-lg text-center border-neutral-700 flex flex-col h-full">
+                    <img src="<?= $faction['image'] ?>" alt="<?= $faction['name'] ?>" class="w-full h-64 object-cover rounded-lg mb-2">
+                    <p class="text-white font-bold text-lg flex-grow"><?= $faction['name'] ?></p>
+                    <p class="text-gray-400 text-sm"><?= $faction['regime'] ?></p> <!-- Affichage du régime -->
+                </div>
+            </a>
+        <?php endforeach; ?>
+    </div>
 </div>
 
 <script>
