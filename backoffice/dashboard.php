@@ -14,7 +14,7 @@ $sections = [
     ["title" => "Héros", "image" => BASE_URL . "img/default/Hero.jpeg", "link" => BASE_URL . "backoffice/manage_heros.php"],
     ["title" => "Races", "image" => BASE_URL . "img/default/Races.jpeg", "link" => BASE_URL . "backoffice/manage_races.php"],
     ["title" => "Contextes", "image" => BASE_URL . "img/default/Contexte.jpeg", "link" => BASE_URL . "backoffice/manage_contextes.php"],
-    ["title" => "Carte", "image" => BASE_URL . "img/default/Carte.jpeg", "link" => BASE_URL . "backoffice/manage_carte.php"],
+   
 ];
 
 ?>
