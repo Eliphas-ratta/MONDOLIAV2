@@ -13,6 +13,14 @@ $races = $pdo->query("SELECT * FROM races")->fetchAll(PDO::FETCH_ASSOC);
 $guildes = $pdo->query("SELECT * FROM guildes")->fetchAll(PDO::FETCH_ASSOC);
 $factions = $pdo->query("SELECT * FROM factions")->fetchAll(PDO::FETCH_ASSOC);
 
+
+// Tri des héros par ID pour l'ordre
+usort($heroes, function ($a, $b) {
+    return $b['id'] <=> $a['id'];
+});
+
+
+
 // Gestion des actions (ajout/modification)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = $_POST['id'] ?? null;
