@@ -1,8 +1,15 @@
 <?php
 require_once '../includes/header.php';
 
-// Récupération des contextes avec leur titre et ID
-$stmt = $pdo->query("SELECT c.id, c.titre FROM contextes c");
+// Récupération des contextes avec les héros associés
+$stmt = $pdo->query("
+    SELECT c.id, c.titre, 
+           GROUP_CONCAT(h.name SEPARATOR ', ') AS heros_associes
+    FROM contextes c
+    LEFT JOIN hero_contextes hc ON c.id = hc.contexte_id
+    LEFT JOIN heros h ON hc.hero_id = h.id
+    GROUP BY c.id, c.titre
+");
 $contextes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Récupération des héros pour le filtre
@@ -31,10 +38,11 @@ $heros = $pdo->query("SELECT id, name FROM heros")->fetchAll(PDO::FETCH_ASSOC);
         <?php foreach ($contextes as $contexte) : ?>
             <a href="contexte.php?id=<?= $contexte['id'] ?>" 
                class="contexte-card transform transition duration-300 hover:scale-105"
-               data-hero="<?= $contexte['hero'] ?? 'Aucun' ?>">
+               data-hero="<?= strtolower($contexte['heros_associes'] ?? '') ?>">
                
-                <div class="bg-neutral-900 p-4 rounded-lg shadow-lg text-center border-neutral-700 flex items-center justify-center h-20">
+                <div class="bg-neutral-900 p-4 rounded-lg shadow-lg text-center border-neutral-700 flex flex-col justify-center h-20">
                     <p class="text-white font-bold text-lg"><?= $contexte['titre'] ?></p>
+                    <p class="text-gray-400 text-sm"><?= $contexte['heros_associes'] ?: 'Aucun héros associé' ?></p>
                 </div>
             </a>
         <?php endforeach; ?>
