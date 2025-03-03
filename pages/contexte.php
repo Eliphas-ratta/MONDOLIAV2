@@ -1,7 +1,6 @@
 <?php
 require_once '../includes/header.php';
 
-
 // Récupérer l'ID du contexte sélectionné
 $contexte_id = $_GET['id'] ?? null;
 $contexte = null;
@@ -37,11 +36,13 @@ if ($contexte_id) {
                 <h2 class="text-2xl font-bold text-white mb-4 text-center">Héros liés</h2>
                 <div class="grid grid-cols-5 gap-4">
                     <?php foreach ($related_heroes as $hero) : ?>
-                        <div class="bg-neutral-700 p-4 rounded-lg text-center">
-                            <img src="<?= htmlspecialchars($hero['image']) ?>" class="w-24 h-24 rounded-full mx-auto object-cover">
-                            <p class="text-white font-bold mt-2"><?= htmlspecialchars($hero['name']) ?></p>
-                            <p class="text-gray-400 text-sm"><?= htmlspecialchars($hero['fonction']) ?></p>
-                        </div>
+                        <a href="hero.php?id=<?= $hero['id'] ?>" class="block transform transition duration-300 hover:scale-105">
+                            <div class="bg-neutral-700 p-4 rounded-lg text-center cursor-pointer hover:bg-neutral-600">
+                                <img src="<?= htmlspecialchars($hero['image']) ?>" class="w-24 h-24 rounded-full mx-auto object-cover">
+                                <p class="text-white font-bold mt-2"><?= htmlspecialchars($hero['name']) ?></p>
+                                <p class="text-gray-400 text-sm"><?= htmlspecialchars($hero['fonction']) ?></p>
+                            </div>
+                        </a>
                     <?php endforeach; ?>
                 </div>
             </div>

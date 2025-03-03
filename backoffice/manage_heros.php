@@ -180,8 +180,9 @@ if (isset($_GET['edit'])) {
                             <?= $hero['guilde_id'] ? htmlspecialchars($guildes[array_search($hero['guilde_id'], array_column($guildes, 'id'))]['name']) : 'Aucune' ?>
                         </td>
                         <td class="p-3">
-                            <?= $hero['faction_id'] ? htmlspecialchars($factions[array_search($hero['faction_id'], array_column($guildes, 'id'))]['name']) : 'Aucune' ?>
-                        </td>
+    <?= $hero['faction_id'] ? htmlspecialchars($factions[array_search($hero['faction_id'], array_column($factions, 'id'))]['name']) : 'Aucune' ?>
+</td>
+
                         <td class="p-3 text-center">
                             <div class="flex items-center justify-center space-x-2">
                                 <a href="?edit=<?= $hero['id'] ?>" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition">Modifier</a>
